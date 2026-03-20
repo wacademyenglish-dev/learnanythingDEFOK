@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WOLF SERIES | The Fast Learner (B1 Evolved)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-card: #0c0c0c;
+            --brand-accent: #1DB954; 
+            --brand-secondary: #3b82f6;
+            --text-main: #FFFFFF;
+            --text-sub: #94a3b8;
+            --hp-red: #ff3333;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        h1, h2, h3, .brand-font { font-family: 'Inter', sans-serif; letter-spacing: -0.03em; }
+        .rajdhani { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
+
+        /* SPECTRAL LAYER */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(29, 185, 84, 0.015), rgba(0, 0, 0, 0), rgba(59, 130, 246, 0.015));
+            z-index: 1000;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* HUD TOP */
+        #hud-top {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            padding: 20px 40px;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.95) 0%, transparent);
+            z-index: 1500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(12px);
+        }
+
+        .hud-bar-container { width: 140px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .hud-bar-fill { height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* CONTENT ARENA */
+        #mission-arena { height: 100vh; padding-bottom: 130px; overflow-y: auto; overflow-x: hidden; }
+
+        /* INTEL SIDEBAR SYSTEM */
+        .intel-sidebar {
+            background: rgba(12, 12, 12, 0.95);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 2.5rem;
+            height: fit-content;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            transition: all 0.4s ease;
+        }
+
+        /* VOCAB IN CONTEXT */
+        .vocab-word {
+            color: var(--brand-accent);
+            font-weight: 800;
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+            transition: all 0.2s ease;
+            border-bottom: 2px dashed var(--brand-accent);
+        }
+        .vocab-word:hover { background: rgba(29, 185, 84, 0.15); border-bottom-style: solid; }
+        .vocab-word.active { background: var(--brand-accent); color: black; border-bottom: none; border-radius: 4px; padding: 0 4px; }
+
+        /* SCENARIO & DRILL BUTTONS */
+        .interactive-btn {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .interactive-btn:hover:not(.locked) { background: rgba(255,255,255,0.05); border-color: var(--brand-accent); }
+        .interactive-btn.active { border-color: var(--brand-accent); background: rgba(29, 185, 84, 0.08); transform: translateX(8px); }
+        .interactive-btn.correct { background: rgba(29, 185, 84, 0.15) !important; border-color: var(--brand-accent) !important; color: var(--brand-accent); }
+        .interactive-btn.wrong { background: rgba(255, 77, 77, 0.15) !important; border-color: var(--hp-red) !important; color: var(--hp-red); }
+
+        /* SCRIPT ANALYSIS ITEMS */
+        .lyric-item {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            padding: 1.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+        .lyric-item:hover { border-color: rgba(29, 185, 84, 0.5); }
+        .lyric-item.active { 
+            border-color: var(--brand-accent);
+            background: rgba(29, 185, 84, 0.08);
+        }
+        .live-tag {
+            position: absolute; top: -12px; left: 24px;
+            background: #111; border: 1px solid var(--brand-accent); color: var(--text-main);
+            font-size: 8px; font-weight: 900; padding: 4px 10px; border-radius: 12px;
+            text-transform: uppercase; letter-spacing: 2px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .live-tag::before { content: ''; display: block; width: 6px; height: 6px; background: var(--brand-accent); border-radius: 50%; }
+
+        /* NAV CONSOLE (FOOTER) */
+        #nav-console {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 48px); max-width: 1000px;
+            background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 32px;
+            padding: 14px 36px; z-index: 5000;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+        }
+
+        .drawer { background: #080808; border-left: 1px solid rgba(255,255,255,0.05); transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 5100; box-shadow: -20px 0 50px rgba(0,0,0,0.9); }
+        .drawer.active { transform: translateX(0); }
+
+        /* ANIMATIONS */
+        .fade-in { animation: fadeIn 0.6s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* FUNCTIONAL SLIDER */
+        input[type=range].wolf-slider { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range].wolf-slider:focus { outline: none; }
+        input[type=range].wolf-slider::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: rgba(255,255,255,0.1); border-radius: 4px; }
+        input[type=range].wolf-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 28px; width: 28px; border-radius: 50%; background: var(--brand-accent); cursor: pointer; margin-top: -10px; box-shadow: 0 0 15px var(--brand-accent); transition: transform 0.1s; }
+        input[type=range].wolf-slider::-webkit-slider-thumb:hover { transform: scale(1.1); }
+
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 24px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* AI CHAT SCROLLBAR */
+        #ai-messages::-webkit-scrollbar { width: 4px; }
+        #ai-messages::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden text-sm">
+
+    <!-- HUD -->
+    <div id="hud-top">
+        <div class="flex items-center gap-8">
+            <div class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-lg">
+                <i class="fas fa-fingerprint text-[var(--brand-accent)] text-xl"></i>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-[11px] font-black text-white tracking-[0.4em] uppercase">WOLF LABS ENGINE</span>
+                <span class="text-[9px] font-bold text-[var(--brand-accent)] uppercase tracking-widest flex items-center gap-2">
+                    <span class="w-2 h-2 bg-[var(--brand-accent)] rounded-full animate-pulse shadow-[0_0_8px_var(--brand-accent)]"></span> SYSTEM ACTIVE
+                </span>
+            </div>
+        </div>
+        <div class="flex items-center gap-6">
+            <button onclick="toggleFullscreen()" class="text-[#666] hover:text-white transition-colors" title="Toggle Fullscreen">
+                <i class="fas fa-expand text-xl"></i>
+            </button>
+            <div class="text-right">
+                <p class="rajdhani text-2xl font-bold text-white tracking-widest leading-none">WOLF <span class="text-[var(--brand-accent)]">SERIES</span></p>
+                <p class="text-[8px] font-black text-[var(--brand-accent)] tracking-[0.6em] uppercase">Evolved Experience Mode</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD (COVER) -->
+    <main id="dashboard" class="flex-grow flex flex-col items-center justify-center relative bg-[#020202] px-8">
+        <div class="max-w-6xl w-full flex flex-col items-center text-center space-y-12 animate-in fade-in">
+            <div class="w-64 h-64 md:w-80 md:h-80 bg-[#0a0a0a] rounded-[50px] border border-white/5 flex items-center justify-center shadow-2xl overflow-hidden relative group">
+                <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&q=80" class="absolute inset-0 w-full h-full object-cover opacity-30 grayscale scale-110 group-hover:scale-100 group-hover:grayscale-0 transition-all duration-1000">
+                <i class="fas fa-brain text-8xl text-[#1DB954] relative z-10 drop-shadow-2xl"></i>
+            </div>
+            <div class="space-y-4">
+                <p class="text-[var(--brand-accent)] font-black text-[10px] tracking-[1em] uppercase">Interactive B1 Session</p>
+                <h1 class="text-7xl md:text-9xl font-black text-white leading-none tracking-tighter uppercase">THE FAST <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-[#444]">LEARNER</span></h1>
+            </div>
+            <div class="flex flex-wrap justify-center gap-3">
+                <span class="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-[#888]">Zero & First Conditionals</span>
+                <span class="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-[#888]">Context Vocab</span>
+                <span class="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-[#888]">WOLF ENGINE AI</span>
+            </div>
+            <button onclick="startMission()" class="mt-8 px-16 py-6 bg-[var(--brand-accent)] text-black font-black text-sm uppercase tracking-[0.4em] rounded-full hover:scale-105 transition-all shadow-[0_0_40px_rgba(29,185,84,0.3)]">
+                Initialize Core
+            </button>
+        </div>
+    </main>
+
+    <!-- MISSION ARENA -->
+    <main id="mission-arena" class="hidden flex-grow flex flex-col overflow-hidden relative bg-[#050505]">
+        <div id="mission-content" class="flex-grow px-6 md:px-12 py-32 flex flex-col items-center"></div>
+    </main>
+
+    <!-- NAV CONSOLE -->
+    <footer id="nav-console" class="hidden">
+        <div class="flex items-center gap-8 w-1/4">
+            <button onclick="goHome()" class="text-[#444] hover:text-red-500 transition-colors"><i class="fas fa-power-off text-xl"></i></button>
+            <div class="flex flex-col">
+                <span id="console-title" class="text-[10px] font-black text-white uppercase tracking-widest truncate">Sector 01</span>
+                <span id="console-type" class="text-[7px] font-bold text-[var(--brand-accent)] uppercase tracking-widest">Protocol</span>
+            </div>
+        </div>
+        <div class="flex flex-col items-center gap-3 w-1/2">
+            <div class="flex items-center gap-12">
+                <button onclick="prevStep()" class="text-white/30 hover:text-white transition-colors"><i class="fas fa-chevron-left text-2xl"></i></button>
+                <span id="console-counter" class="rajdhani text-xs font-bold text-[#666] tracking-[0.8em]">01 / 35</span>
+                <button onclick="nextStep()" class="text-white hover:scale-110 transition-all"><i class="fas fa-chevron-right text-2xl"></i></button>
+            </div>
+            <div class="w-full max-w-[240px] h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full bg-[var(--brand-accent)] transition-all duration-300" style="width: 0%;"></div>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-6 w-1/4">
+            <button onclick="toggleAiChat()" class="text-[#444] hover:text-[var(--brand-accent)] transition-colors" title="WOLF AI Chat"><i class="fas fa-comment-dots text-xl"></i></button>
+            <button onclick="toggleWhiteboard()" class="text-[#444] hover:text-[var(--brand-accent)] transition-colors" title="Tactical Board"><i class="fas fa-pen-nib text-xl"></i></button>
+            <button onclick="toggleLessonNavigator()" class="text-[#444] hover:text-white transition-colors" title="Mission Map"><i class="fas fa-list-ul text-xl"></i></button>
+        </div>
+    </footer>
+
+    <!-- WOLF ENGINE AI CHAT -->
+    <aside id="ai-chat" class="fixed right-0 top-0 h-screen w-[450px] drawer flex flex-col pt-24">
+        <div class="p-8 border-b border-white/5 bg-[#0a0a0a] flex justify-between items-center shrink-0">
+            <h2 class="rajdhani text-2xl font-bold text-[var(--brand-accent)] tracking-widest flex items-center gap-3"><i class="fas fa-robot"></i> WOLF AI</h2>
+            <button onclick="toggleAiChat()" class="text-white hover:text-[var(--brand-accent)] transition-colors"><i class="fas fa-times text-xl"></i></button>
+        </div>
+        <div id="ai-messages" class="flex-grow bg-[#050505] p-6 overflow-y-auto flex flex-col gap-4">
+            <div class="bg-[#111] border border-[var(--brand-accent)]/30 rounded-2xl p-4 self-start max-w-[85%]">
+                <p class="text-[10px] text-[var(--brand-accent)] font-black uppercase tracking-widest mb-1">WOLF AI</p>
+                <p class="text-sm text-white leading-relaxed">Hello, Commander. Ask me any English question to assist your mission.</p>
+            </div>
+        </div>
+        <div class="p-6 bg-[#0a0a0a] border-t border-white/5 shrink-0">
+            <div class="relative">
+                <input type="text" id="ai-input" onkeypress="handleAiChatSubmit(event)" class="w-full bg-[#111] border border-white/10 rounded-full py-4 pl-6 pr-14 text-white text-sm focus:outline-none focus:border-[var(--brand-accent)] transition-colors" placeholder="Ask WOLF ENGINE...">
+                <button onclick="sendAiMessage()" class="absolute right-4 top-1/2 -translate-y-1/2 text-[#666] hover:text-[var(--brand-accent)] transition-colors w-8 h-8 flex items-center justify-center"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- TACTICAL BOARD (CLEAN) -->
+    <aside id="whiteboard" class="fixed right-0 top-0 h-screen w-[450px] drawer flex flex-col pt-24">
+        <div class="p-8 border-b border-white/5 bg-[#0a0a0a] flex justify-between items-center shrink-0">
+            <h2 class="rajdhani text-2xl font-bold text-[var(--brand-accent)] tracking-widest">Tactical Board</h2>
+            <button onclick="toggleWhiteboard()" class="text-white hover:text-[var(--brand-accent)] transition-colors"><i class="fas fa-times text-xl"></i></button>
+        </div>
+        <textarea id="wb-text" class="flex-grow bg-[#050505] text-white p-8 resize-none focus:outline-none font-mono text-sm leading-relaxed" placeholder="> Capture lesson notes, corrections, and strategy here..."></textarea>
+    </aside>
+
+    <aside id="lesson-navigator" class="fixed right-0 top-0 h-screen w-80 drawer flex flex-col pt-24">
+        <div class="p-8 border-b border-white/5 bg-[#0a0a0a] text-white font-black uppercase tracking-widest flex justify-between items-center text-lg shrink-0">Mission Map <button onclick="toggleLessonNavigator()"><i class="fas fa-times text-xl"></i></button></div>
+        <div id="nav-steps-list" class="flex-grow overflow-y-auto p-4 space-y-2"></div>
+    </aside>
+
+    <script>
+        // --- ENGINE CORE ---
+        let state = { current: 0 };
+        const apiKey = ""; // Canvas provides it dynamically
+        const esc = (s) => s.replace(/'/g, "\\'");
+        
+        const TYPES = { GUIDE: "Protocol", WARMUP: "Prediction", PRE: "Pre-Teach", VOCAB: "Context Vocab", VIDEO: "Intel", SCRIPT: "Decode", COMP: "Comprehension", GRAMMAR: "Logic", DRILL: "Combat", SPEAKING: "Arena", STAND: "Decision", WRAP: "Clear" };
+
+        // --- VOCABULARY DATABASE (WITH QUESTIONS) ---
+        const vocabDB = {
+            'master': {word: "master", def: "To learn how to do something perfectly.", syn: "Conquer, excel at", question: "If you want to master English, what is your first step?", starter: "If I want to master English, I need to..."},
+            'nonsense': {word: "nonsense", def: "Ideas or statements that are silly or not true.", syn: "Rubbish, foolishness", question: "What is a common nonsense people say about learning?", starter: "A common nonsense about learning is..."},
+            'obscure': {word: "obscure", def: "Not known to many people; rarely used.", syn: "Unknown, hidden", question: "Why do people like obscure things?", starter: "I think people like obscure things because..."},
+            'isolate': {word: "isolate", def: "To separate one specific thing from everything else.", syn: "Separate, detach", question: "When you study, do you isolate your weaknesses?", starter: "When I study, I usually isolate..."},
+            'drill down': {word: "drill down", def: "To practice one specific thing intensely and in detail.", syn: "Focus on, dig into", question: "What specific skill do you need to drill down on?", starter: "I need to drill down on my..."},
+            'reinforce': {word: "reinforce", def: "To make an idea or knowledge stronger in your mind.", syn: "Strengthen, support", question: "How do you reinforce new vocabulary?", starter: "To reinforce my memory, I usually..."},
+            'mess up': {word: "mess up", def: "To make a mistake or do something badly.", syn: "Fail, make an error", question: "How do you feel when you mess up?", starter: "Even if I mess up, I will..."}
+        };
+
+        function step(type, title, html) { return { type, title, html }; }
+
+        function updateHUD() {
+            const pBar = document.getElementById('progress-bar');
+            if (pBar) pBar.style.width = ((state.current + 1) / lessonData.length * 100) + '%';
+        }
+
+        // --- TEMPLATES (WOLF SERIES) ---
+        
+        function bGuide(title, points) {
+            return step(TYPES.GUIDE, title, `
+                <div class="max-w-4xl mx-auto space-y-12 animate-in fade-in py-10">
+                    <p class="text-[var(--brand-accent)] font-black uppercase tracking-[0.6em] text-[10px]">Architect Briefing</p>
+                    <h2 class="text-7xl font-black text-white tracking-tighter leading-none">${title}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        ${points.map(p => `<div class="p-8 bg-white/5 border-l-4 border-[var(--brand-accent)] rounded-2xl"><p class="text-xl text-white font-bold leading-tight">${p}</p></div>`).join('')}
+                    </div>
+                </div>
+            `);
+        }
+
+        function bPrediction(title, prompt, revealText, starter) {
+            return step(TYPES.WARMUP, title, `
+                <div class="max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center space-y-16 animate-in fade-in">
+                    <p class="text-[var(--brand-accent)] font-black uppercase tracking-[0.8em] text-[10px] animate-pulse">Prediction Phase</p>
+                    <h2 class="text-5xl md:text-7xl font-black text-white tracking-tighter leading-tight">${prompt}</h2>
+                    <div class="w-full max-w-xl group relative cursor-pointer" onclick="this.querySelector('.reveal-box').classList.remove('opacity-0', 'translate-y-4')">
+                        <div class="absolute inset-0 bg-[var(--brand-accent)] rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                        <div class="bg-[#111] p-12 rounded-3xl border border-[var(--brand-accent)]/30 relative z-10">
+                            <p class="text-xs font-black text-[#666] uppercase tracking-widest mb-2">Click to Reveal Truth</p>
+                            <p class="reveal-box opacity-0 translate-y-4 transition-all duration-500 text-3xl font-black text-white italic">"${revealText}"</p>
+                        </div>
+                    </div>
+                    <div class="w-full text-left p-8 bg-white/5 rounded-2xl border-l-4 border-[var(--brand-secondary)] mt-8">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-[#888] mb-3">Sync Response</p>
+                        <p class="text-2xl font-bold text-white">"${starter}"</p>
+                    </div>
+                </div>
+            `);
+        }
+
+        function bContextVocab(title, storyHtml) {
+            return step(TYPES.VOCAB, title, `
+                <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-10 animate-in fade-in">
+                    <div class="lg:col-span-7 space-y-8">
+                        <p class="text-[var(--brand-accent)] font-black uppercase tracking-[0.6em] text-[10px]">Contextual Data Mining</p>
+                        <h2 class="text-5xl font-black text-white tracking-tighter uppercase leading-none">${title}</h2>
+                        <div class="bg-[#111] p-10 rounded-[32px] border border-white/5 text-3xl font-bold leading-relaxed text-[#ccc]">
+                            ${storyHtml}
+                        </div>
+                        <p class="text-xs font-bold text-[#666] uppercase tracking-widest"><i class="fas fa-mouse-pointer text-[var(--brand-accent)] mr-2"></i> Click highlighted words to decrypt meaning.</p>
+                    </div>
+                    <div id="intel-sidebar" class="lg:col-span-5 intel-sidebar flex flex-col min-h-[450px]">
+                        <div class="mb-6">
+                            <p class="text-[9px] font-black text-[#555] uppercase tracking-[0.4em] mb-4">Target Keyword</p>
+                            <p class="text-5xl text-white font-black leading-tight tracking-tighter uppercase" id="v-word">SELECT WORD</p>
+                            <p class="text-sm font-bold text-[var(--brand-accent)] mt-2 uppercase tracking-widest" id="v-syn">...</p>
+                        </div>
+                        <div class="w-full h-px bg-white/10 mb-6"></div>
+                        <div class="mb-6 flex-grow">
+                            <p class="text-[9px] font-black text-[#555] uppercase tracking-[0.4em] mb-4">Core Definition</p>
+                            <p class="text-xl text-[#fff] font-medium leading-relaxed italic" id="v-def">Awaiting selection...</p>
+                            
+                            <p class="text-[9px] font-black text-[#555] uppercase tracking-[0.4em] mt-6 mb-3">Contextual Query</p>
+                            <p class="text-lg text-[var(--brand-accent)] font-bold leading-snug" id="v-question">...</p>
+                        </div>
+                        <div class="bg-white/5 p-6 rounded-2xl border-l-4 border-[var(--brand-accent)] mt-auto">
+                            <p class="text-[9px] font-black text-[var(--brand-accent)] uppercase tracking-widest mb-2">Live Application</p>
+                            <p class="text-xl font-bold text-white italic" id="v-starter">"..."</p>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        function bScenario(title, prompt, options) {
+            const optHtml = options.map((opt, i) => `
+                <div onclick="handleScenario(this, '${esc(opt.insight)}', '${esc(opt.logic)}', '${esc(opt.starter)}')" class="interactive-btn group">
+                    <div>
+                        <p class="text-2xl font-black text-white mb-2">${opt.label}</p>
+                        <p class="text-base text-[#888] font-medium">${opt.desc}</p>
+                    </div>
+                    <i class="fas fa-chevron-right text-[var(--brand-accent)] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                </div>
+            `).join('');
+
+            return step(TYPES.PRE, title, `
+                <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-10 animate-in fade-in">
+                    <div class="lg:col-span-7 space-y-10">
+                        <p class="text-[var(--brand-accent)] font-black uppercase tracking-[0.5em] text-[10px]">Decision Engine</p>
+                        <h2 class="text-6xl font-black text-white tracking-tighter leading-none">${prompt}</h2>
+                        <div class="space-y-4" id="scenario-options">${optHtml}</div>
+                    </div>
+                    <div id="intel-sidebar" class="lg:col-span-5 intel-sidebar flex flex-col min-h-[450px]">
+                        <div class="mb-8">
+                            <p class="text-[9px] font-black text-[#555] uppercase tracking-[0.5em] mb-4">Strategic Insight</p>
+                            <p class="text-3xl text-white font-black leading-tight" id="i-insight">Analyze options...</p>
+                        </div>
+                        <div class="w-full h-px bg-white/10 mb-8"></div>
+                        <div class="mb-10 flex-grow">
+                            <p class="text-[9px] font-black text-[var(--brand-secondary)] uppercase tracking-[0.5em] mb-4">Underlying Logic</p>
+                            <p class="text-xl text-[#ccc] font-medium leading-relaxed" id="i-logic">...</p>
+                        </div>
+                        <div class="bg-[var(--brand-accent)]/10 p-8 rounded-2xl border-l-4 border-[var(--brand-accent)] mt-auto">
+                            <p class="text-[9px] font-black text-[var(--brand-accent)] uppercase tracking-widest mb-3">Defend Choice</p>
+                            <p class="text-xl font-bold text-white italic" id="i-starter">"..."</p>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        function bScript(title, lines, targetIdx, analysisData) {
+            const linesHtml = lines.map((line, i) => {
+                if(i === targetIdx) return `
+                    <div class="lyric-item group" onclick="revealAnalysis(this, '${esc(analysisData.grammar)}', '${esc(analysisData.logic)}', '${esc(analysisData.starter)}')">
+                        <div class="live-tag hidden group-[.active]:flex"><i class="fas fa-search text-[8px]"></i> LIVE ANALYSIS</div>
+                        <p class="text-3xl md:text-4xl font-black text-white leading-tight mt-2">${line.replace(/\[(.*?)\]/g, '<span class="text-[var(--brand-accent)] underline decoration-4 underline-offset-4">$1</span>')}</p>
+                    </div>`;
+                return `<p class="text-2xl font-bold text-[#555] py-2 leading-tight pl-6">${line}</p>`;
+            }).join('');
+
+            return step(TYPES.SCRIPT, title, `
+                <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center min-h-[60vh] py-10 animate-in fade-in">
+                    <div class="lg:col-span-7 space-y-6">
+                        <p class="text-[10px] font-black uppercase tracking-[0.4em] text-[#888] mb-4">Raw Transcript</p>
+                        <div class="space-y-4">${linesHtml}</div>
+                    </div>
+                    <div class="lg:col-span-5 intel-sidebar flex flex-col min-h-[450px]">
+                        <div class="mb-8 relative">
+                            <button onclick="hideAnalysis()" class="absolute -top-2 -right-2 w-8 h-8 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 text-[#888] hover:text-white transition-all hidden" id="close-analysis-btn"><i class="fas fa-times"></i></button>
+                            <p class="text-[9px] font-black text-[var(--brand-accent)] uppercase tracking-[0.4em] mb-4">Grammar Focus</p>
+                            <p class="text-4xl text-white font-black leading-tight tracking-tighter uppercase" id="a-grammar">Extracting...</p>
+                        </div>
+                        <div class="w-full h-px bg-white/10 mb-8"></div>
+                        <div class="mb-10 flex-grow">
+                            <p class="text-[9px] font-black text-[#555] uppercase tracking-[0.4em] mb-4">The Logic</p>
+                            <p class="text-xl text-[#ccc] font-medium leading-relaxed italic" id="a-logic">Select highlighted text.</p>
+                        </div>
+                        <div class="bg-[#111] p-8 rounded-2xl border border-[var(--brand-accent)]/30 mt-auto shadow-[0_0_20px_rgba(29,185,84,0.1)]">
+                            <p class="text-xl font-bold text-white italic mb-2" id="a-question">What will happen?</p>
+                            <p class="text-[10px] font-black text-[var(--brand-accent)] uppercase tracking-widest" id="a-starter">STARTER: "..."</p>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        function bLogicGrammar(title, rule, examples, question, starter) {
+            return step(TYPES.GRAMMAR, title, `
+                <div class="max-w-5xl mx-auto space-y-10 animate-in fade-in py-10">
+                    <div class="text-center space-y-4 mb-12">
+                        <p class="text-[var(--brand-accent)] font-black uppercase tracking-[0.8em] text-[10px]">Logic Formalization</p>
+                        <h2 class="text-7xl font-black text-white tracking-tighter uppercase">${title}</h2>
+                        <p class="text-2xl text-[#888] font-bold">${rule}</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                        ${examples.map(ex => `
+                            <div class="p-10 bg-[#111] border border-white/5 rounded-[32px] space-y-6 shadow-xl hover:border-[var(--brand-accent)]/50 transition-colors">
+                                <p class="text-[10px] font-black uppercase text-[var(--brand-secondary)] tracking-widest border border-[var(--brand-secondary)]/30 inline-block px-4 py-1 rounded-full">${ex.context}</p>
+                                <p class="text-4xl font-black text-white leading-tight">${ex.text.replace(/\[(.*?)\]/g, '<span class="text-[var(--brand-accent)]">$1</span>')}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${question ? `
+                    <div class="w-full max-w-4xl mx-auto p-10 bg-white/5 rounded-[32px] border-l-4 border-[var(--brand-accent)] shadow-2xl mt-8 text-left">
+                        <p class="text-[9px] font-black text-[var(--brand-accent)] uppercase tracking-widest mb-4">Live Application Prompt</p>
+                        <p class="text-3xl font-black text-white mb-6 leading-tight">"${question}"</p>
+                        <p class="text-xl font-bold text-[#888] italic">Starter: "${starter}"</p>
+                    </div>
+                    ` : ''}
+                </div>
+            `);
+        }
+
+        function bCombatTrial(id, instruction, prefix, suffix, options, correctIdx, followup, starter) {
+            return step(TYPES.DRILL, instruction, `
+                <div class="max-w-4xl mx-auto w-full flex flex-col items-center py-10 animate-in fade-in">
+                    <p class="text-[var(--hp-red)] font-black uppercase tracking-[0.8em] text-[10px] mb-6 animate-pulse">Combat Arena</p>
+                    <h2 class="text-5xl font-black text-white tracking-tighter mb-16 text-center uppercase">${instruction}</h2>
+                    <div class="text-4xl md:text-5xl font-black text-white leading-tight w-full text-center mb-16">
+                        ${prefix} <span id="quiz-blank-${id}" class="inline-block border-b-4 border-[var(--brand-accent)] min-w-[180px] text-[var(--brand-accent)] pb-2 mx-4 uppercase transition-all">&nbsp;</span> ${suffix}
+                    </div>
+                    <div class="w-full max-w-2xl space-y-4" id="quiz-options-${id}">
+                        ${options.map((opt, i) => `
+                            <div onclick="handleCombatTrial('${id}', this, ${i === correctIdx}, '${esc(opt)}', '${esc(followup)}', '${esc(starter)}')" class="interactive-btn group">
+                                <div class="flex items-center gap-6"><span class="text-xl font-black text-[#555] w-8">${i+1}</span><span class="text-3xl font-bold text-white uppercase">${opt}</span></div>
+                                <i class="fas fa-crosshairs text-[var(--brand-accent)] opacity-0 group-hover:opacity-100 transition-opacity text-xl"></i>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div id="followup-box-${id}" class="hidden w-full mt-16 p-10 bg-[#111] rounded-[32px] text-left border-l-8 border-[var(--brand-accent)] shadow-2xl">
+                        <p class="text-[10px] font-black uppercase text-[var(--brand-accent)] tracking-widest mb-4">Follow-up Strike</p>
+                        <p class="text-3xl font-black mb-6 text-white leading-tight uppercase">${followup}</p>
+                        <p class="text-xl text-[#888] font-bold italic">"${starter}"</p>
+                    </div>
+                </div>
+            `);
+        }
+
+        function bDecisionStand(title, optionA, optionB, starter) {
+            return step(TYPES.STAND, title, `
+                <div class="max-w-6xl mx-auto w-full flex flex-col items-center space-y-16 py-10 animate-in fade-in text-center">
+                    <div class="space-y-4">
+                        <p class="text-[var(--brand-secondary)] font-black uppercase tracking-[0.8em] text-[10px]">Value Assessment</p>
+                        <h2 class="text-6xl font-black text-white tracking-tighter uppercase">${title}</h2>
+                    </div>
+                    <div class="w-full flex flex-col md:flex-row gap-10 items-center justify-between">
+                        <div class="flex-1 p-12 bg-[#111] rounded-[40px] border border-white/5 space-y-6 w-full">
+                            <p class="text-6xl">${optionA.icon}</p>
+                            <h3 class="text-2xl font-black text-white uppercase">${optionA.text}</h3>
+                        </div>
+                        <div class="w-full md:w-64 flex flex-col items-center gap-6">
+                            <input type="range" min="0" max="100" value="50" class="wolf-slider">
+                            <p class="text-[10px] font-black text-[#666] uppercase tracking-widest">Adjust to your stance</p>
+                        </div>
+                        <div class="flex-1 p-12 bg-[#111] rounded-[40px] border border-white/5 space-y-6 w-full">
+                            <p class="text-6xl">${optionB.icon}</p>
+                            <h3 class="text-2xl font-black text-white uppercase">${optionB.text}</h3>
+                        </div>
+                    </div>
+                    <div class="w-full max-w-3xl p-10 bg-[#1a1a1a] rounded-[32px] text-left border-l-4 border-[var(--brand-accent)] shadow-2xl">
+                        <p class="text-[9px] font-black text-[var(--brand-accent)] uppercase mb-4 tracking-widest">Defend your position</p>
+                        <p class="text-2xl font-bold text-white italic leading-tight">"${starter}"</p>
+                    </div>
+                </div>
+            `);
+        }
+
+        function bWrap() {
+            return step(TYPES.WRAP, "Mission Clear", `
+                <div class="text-center space-y-12 max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[75vh] animate-in fade-in">
+                    <div class="w-48 h-48 rounded-[60px] bg-[var(--brand-accent)]/10 mx-auto flex items-center justify-center text-[100px] border-2 border-[var(--brand-accent)] shadow-[0_0_80px_rgba(29,185,84,0.3)] text-[var(--brand-accent)]"><i class="fas fa-check"></i></div>
+                    <div class="space-y-4">
+                        <h1 class="text-[10rem] font-black text-white leading-none tracking-tighter uppercase italic">MISSION <br> <span class="text-[var(--brand-accent)]">SECURED</span></h1>
+                        <p class="text-2xl text-[#888] font-bold tracking-widest uppercase mt-6">Logic Patterns fully integrated.</p>
+                    </div>
+                    <button onclick="goHome()" class="px-16 py-6 bg-white text-black font-black uppercase tracking-[0.3em] text-sm hover:scale-105 transition-all rounded-full shadow-2xl mt-10">Return to Hub</button>
+                </div>
+            `);
+        }
+
+        // --- MISSION DATA (35 STEPS) ---
+        const lessonData = [
+            bGuide("Evolved Protocol", ["Zero Passive Elements", "Context-First Logic", "80% Speaking Requirement"]),
+            bGuide("The Objective", ["Master Zero & First Conditionals", "Understand 80/20 Learning", "Debate Talent vs Strategy"]),
+            
+            step(TYPES.COVER, "The Fast Learner", `<div class="text-center space-y-16 flex flex-col items-center justify-center min-h-[60vh] animate-in fade-in"><div class="w-80 h-80 bg-[#111] border border-white/5 rounded-[64px] flex items-center justify-center shadow-2xl overflow-hidden relative"><img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40"><i class="fas fa-brain text-9xl text-[var(--brand-accent)] relative z-10"></i></div><h1 class="text-[8rem] font-black text-white leading-none tracking-tighter uppercase">THE FAST <br> <span class="text-[var(--brand-accent)]">LEARNER</span></h1></div>`),
+
+            bPrediction("Time Perception", "How long does it take to become fluent in a new language?", "Science says you can hold a solid conversation in 3-6 months with the right strategy.", "I thought it would take... but if the science is right..."),
+            bPrediction("The Hardest Skill", "What is the hardest skill to learn in the world?", "It's highly subjective, but playing the violin and coding are top ranked.", "For me, the hardest skill is... because..."),
+            
+            bContextVocab("The Musician's Trap", 
+                "When Mike decided to <span class='vocab-word' onclick=\"handleVocabClick(this, 'master')\">master</span> the guitar, he thought learning 1,000 chords was the only way. His teacher said that was complete <span class='vocab-word' onclick=\"handleVocabClick(this, 'nonsense')\">nonsense</span>. Instead of learning <span class='vocab-word' onclick=\"handleVocabClick(this, 'obscure')\">obscure</span> chords he'd never use, he focused on just four basic ones. Within weeks, he was playing actual songs."
+            ),
+            bContextVocab("The Speaker's Panic", 
+                "Sarah used to freeze during presentations. To fix this, she decided to <span class='vocab-word' onclick=\"handleVocabClick(this, 'isolate')\">isolate</span> her weakest point: her hands. She would <span class='vocab-word' onclick=\"handleVocabClick(this, 'drill down')\">drill down</span> on just keeping her hands relaxed while speaking for 30 seconds. Slowly, she became confident."
+            ),
+            bContextVocab("The Medical Trick", 
+                "In medical school, you learn fast. You see a procedure, do it, and then teach it to someone else to <span class='vocab-word' onclick=\"handleVocabClick(this, 'reinforce')\">reinforce</span> the knowledge. You must try immediately, even if you <span class='vocab-word' onclick=\"handleVocabClick(this, 'mess up')\">mess up</span> the first time."
+            ),
+
+            step(TYPES.VIDEO, "Intel: The Video", `<div class="max-w-6xl mx-auto w-full flex flex-col items-center animate-in fade-in"><h2 class="rajdhani text-6xl font-black text-white mb-12 tracking-widest italic uppercase underline decoration-[var(--brand-accent)] underline-offset-8">Source Material</h2><div class="video-container w-full max-w-4xl"><iframe src="https://www.youtube.com/embed/dCwXjBa_jNs?rel=0" frameborder="0" allowfullscreen></iframe></div></div>`),
+
+            bScenario("The 80/20 Concept", "You have 1 hour to study English today. What do you do?", [
+                {label: "Study 50 random words", desc: "Read a dictionary to learn everything.", insight: "This is the 80% noise.", logic: "Most of these words are obscure. You won't use them.", starter: "If I study random words, I will..."},
+                {label: "Practice 5 common verbs", desc: "Focus on 'get', 'take', 'have', 'do', 'make'.", insight: "This is the crucial 20%.", logic: "These 5 verbs make up 80% of daily conversation.", starter: "If I master the 20%, I can..."}
+            ]),
+            bScenario("The Medical School Trick", "You just watched a video about a new software tool. What's next?", [
+                {label: "Watch another video", desc: "Keep consuming information to be sure.", insight: "Passive Learning.", logic: "You will forget 90% by tomorrow.", starter: "If I just watch videos, my brain..."},
+                {label: "Explain it to a colleague", desc: "Show someone else how the tool works.", insight: "Active Processing (Teach One).", logic: "Your brain organizes the info differently to explain it.", starter: "When I teach someone, I..."}
+            ]),
+
+            step(TYPES.COMP, "Pattern Recognition 1", `<div class="max-w-5xl mx-auto flex flex-col items-center py-10 animate-in fade-in text-center"><p class="text-[var(--brand-accent)] font-black uppercase tracking-widest text-xs mb-4">Compare the facts</p><h2 class="text-4xl font-black text-white mb-12 leading-tight">1. "If you heat ice, it melts."<br>2. "When you teach someone, you learn."</h2><div class="p-10 bg-white/5 border border-white/10 rounded-[32px] w-full text-left"><p class="text-xl text-[#888] font-bold mb-6">Are these sentences talking about the future, or about general facts that are always true?</p><p class="text-2xl font-black text-white italic">"They are talking about... so we use..."</p></div></div>`),
+            step(TYPES.COMP, "Pattern Recognition 2", `<div class="max-w-5xl mx-auto flex flex-col items-center py-10 animate-in fade-in text-center"><p class="text-[var(--brand-accent)] font-black uppercase tracking-widest text-xs mb-4">Compare the possibilities</p><h2 class="text-4xl font-black text-white mb-12 leading-tight">1. "If you study the 20%, you will learn fast."<br>2. "If you don't practice, you can't play the song."</h2><div class="p-10 bg-white/5 border border-white/10 rounded-[32px] w-full text-left"><p class="text-xl text-[#888] font-bold mb-6">Are these general facts, or specific results that will happen in the future?</p><p class="text-2xl font-black text-white italic">"These are specific results, so we use..."</p></div></div>`),
+
+            bScript("Intel Decode 01", 
+                ["Just 20% of what you learn gives 80% of the results.", "[If you master just four chords], you can play 80% of songs.", "The key is finding the minimum."], 
+                1, 
+                {grammar: "First Conditional", logic: "A real, specific possibility for the future. If + Present, Can/Will + Base verb.", followup: "If you master 20% of English, what will happen?", starter: "If I master the 20%, I can..."}
+            ),
+            bScript("Intel Decode 02", 
+                ["To keep it simple, stupid. Drill it down.", "See it, do it, and teach it.", "[If you forget everything the next day], what's the point?"], 
+                2, 
+                {grammar: "First Conditional (Question)", logic: "Asking about the future consequence of an action.", followup: "What will happen if you don't practice speaking?", starter: "If I don't practice, I will..."}
+            ),
+            bScript("Intel Decode 03", 
+                ["After that, you need to teach it.", "[The moment you try to explain what you learned], your brain has to organize it.", "It reinforces the previous steps."], 
+                1, 
+                {grammar: "Zero Conditional (Logic)", logic: "Using 'The moment' or 'When' instead of 'If' to state a guaranteed fact. Present + Present.", followup: "When you try to teach someone, is it hard?", starter: "When I teach someone, it is..."}
+            ),
+
+            bLogicGrammar("Zero Conditional", "Used for general truths, facts, and routines. (If/When + Present, Present)", [
+                {text: "[If you teach] someone, your brain [organizes] the info.", context: "Scientific Fact"},
+                {text: "[When you isolate] mistakes, you [improve].", context: "Guaranteed Result"}
+            ], "What happens when you learn something new?", "When I learn something new, I usually..."),
+            bLogicGrammar("First Conditional", "Used for real possibilities in the future. (If + Present, Will/Can/Should)", [
+                {text: "[If you focus] on the 20%, you [will learn] faster.", context: "Future Consequence"},
+                {text: "[If you practice] today, you [can play] tomorrow.", context: "Future Ability"}
+            ], "If you master the 20% of your job, what will happen?", "If I master the 20%, I will..."),
+
+            bCombatTrial("q1", "Logic Strike 1/7", "If you drill your weakest point, it", "automatic.", ["becomes", "will becomes", "becoming"], 0, "What becomes automatic for you easily?", "For me, ... becomes automatic."),
+            bCombatTrial("q2", "Logic Strike 2/7", "If I focus on the 20%, I", "the skill faster.", ["will master", "master", "mastering"], 0, "What will you master this year?", "This year, I will master..."),
+            bCombatTrial("q3", "Logic Strike 3/7", "When you teach someone, you", "better.", ["learn", "will learn", "learning"], 0, "Do you like teaching others?", "Yes, when I teach, I..."),
+            bCombatTrial("q4", "Logic Strike 4/7", "", "you forget everything the next day, what's the point?", ["When", "If", "Even"], 1, "What do you do if you forget a word?", "If I forget a word, I..."),
+            bCombatTrial("q5", "Logic Strike 5/7", "You try it", "you mess up.", ["even if", "when", "if will"], 0, "Will you speak English even if you mess up?", "Yes, even if I mess up, I will..."),
+            bCombatTrial("q6", "Logic Strike 6/7", "If she practices eye contact, she", "more confident.", ["feels", "will feel", "feeling"], 1, "What will happen if you present in English?", "If I present in English, I will..."),
+            bCombatTrial("q7", "Logic Strike 7/7", "The moment you explain it, your brain", "the information.", ["organizes", "will organize", "organizing"], 0, "How do you organize your thoughts?", "I organize my thoughts by..."),
+
+            bDecisionStand("Learning Philosophy", {icon: "🧠", text: "Talent is born"}, {icon: "🛠️", text: "Strategy is built"}, "In my opinion, learning is mostly about... because if you..."),
+            bDecisionStand("School System", {icon: "📚", text: "Learn Everything"}, {icon: "🎯", text: "Find the 20%"}, "I think traditional schools try to... but if they focused on the 20%..."),
+
+            step(TYPES.SPEAKING, "Arena 1: The 80/20 Rule", `<div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center space-y-16 animate-in fade-in"><div class="text-[var(--brand-accent)] font-black uppercase tracking-[0.6em] text-[10px] animate-pulse border border-[var(--brand-accent)] px-4 py-1 rounded-full">Live STT Event</div><h2 class="text-7xl md:text-8xl font-black tracking-tighter text-white leading-none uppercase">Apply 80/20 to English</h2><div class="w-full max-w-3xl p-12 rounded-[40px] bg-white/5 border-l-4 border-[var(--brand-accent)] text-left shadow-2xl"><p class="text-[9px] font-black uppercase tracking-[0.5em] text-[#888] mb-6">Execution Prompt</p><p class="text-3xl font-bold text-white leading-tight italic">"If I apply the 80/20 rule to my English, I will focus on... because..."</p></div></div>`),
+            step(TYPES.SPEAKING, "Arena 2: Drill Down", `<div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center space-y-16 animate-in fade-in"><div class="text-[var(--brand-accent)] font-black uppercase tracking-[0.6em] text-[10px] animate-pulse border border-[var(--brand-accent)] px-4 py-1 rounded-full">Live STT Event</div><h2 class="text-7xl md:text-8xl font-black tracking-tighter text-white leading-none uppercase">Your Weakest Point</h2><div class="w-full max-w-3xl p-12 rounded-[40px] bg-white/5 border-l-4 border-[var(--brand-accent)] text-left shadow-2xl"><p class="text-[9px] font-black uppercase tracking-[0.5em] text-[#888] mb-6">Execution Prompt</p><p class="text-3xl font-bold text-white leading-tight italic">"My weakest point in English is... If I want to isolate it, I will drill..."</p></div></div>`),
+            step(TYPES.SPEAKING, "Arena 3: Teach Me", `<div class="max-w-5xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center space-y-16 animate-in fade-in"><div class="text-[var(--brand-accent)] font-black uppercase tracking-[0.6em] text-[10px] animate-pulse border border-[var(--brand-accent)] px-4 py-1 rounded-full">Live STT Event</div><h2 class="text-7xl md:text-8xl font-black tracking-tighter text-white leading-none uppercase">Teach me something</h2><div class="w-full max-w-3xl p-12 rounded-[40px] bg-white/5 border-l-4 border-[var(--brand-accent)] text-left shadow-2xl"><p class="text-[9px] font-black uppercase tracking-[0.5em] text-[#888] mb-6">Execution Prompt</p><p class="text-3xl font-bold text-white leading-tight italic">"I know how to... First, you... Then, you... If you do this, you will..."</p></div></div>`),
+
+            bWrap()
+        ];
+
+        // --- CORE LOGIC RUNTIME ---
+        function startMission() {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('mission-arena').classList.remove('hidden');
+            document.getElementById('nav-console').classList.remove('hidden');
+            renderStep();
+        }
+
+        function goHome() {
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('mission-arena').classList.add('hidden');
+            document.getElementById('nav-console').classList.add('hidden');
+            state.current = 0;
+            updateHUD();
+            document.getElementById('whiteboard').classList.remove('active');
+            document.getElementById('ai-chat').classList.remove('active');
+            document.getElementById('lesson-navigator').classList.remove('active');
+        }
+
+        function renderStep() {
+            const step = lessonData[state.current];
+            document.getElementById('console-title').innerText = `Sector ${String(state.current + 1).padStart(2, '0')}`;
+            document.getElementById('console-type').innerText = step.type;
+            document.getElementById('console-counter').innerText = `PAGE ${String(state.current + 1).padStart(2, '0')} / ${lessonData.length}`;
+            const percent = ((state.current + 1) / lessonData.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('mission-content').innerHTML = `<div class="w-full max-w-7xl px-4">${step.html}</div>`;
+            buildLessonNavigator();
+            updateHUD();
+        }
+
+        function nextStep() { if (state.current < lessonData.length - 1) { state.current++; renderStep(); } else { goHome(); } }
+        function prevStep() { if (state.current > 0) { state.current--; renderStep(); } }
+
+        function toggleWhiteboard() { document.getElementById('whiteboard').classList.toggle('active'); document.getElementById('ai-chat').classList.remove('active'); }
+        function toggleLessonNavigator() { document.getElementById('lesson-navigator').classList.toggle('active'); }
+        function toggleAiChat() { document.getElementById('ai-chat').classList.toggle('active'); document.getElementById('whiteboard').classList.remove('active'); }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        function handleVocabClick(el, wordKey) {
+            document.querySelectorAll('.vocab-word').forEach(w => w.classList.remove('active'));
+            el.classList.add('active');
+            const data = vocabDB[wordKey];
+            if(data) {
+                document.getElementById('v-word').innerText = data.word;
+                document.getElementById('v-syn').innerText = "Synonyms: " + data.syn;
+                document.getElementById('v-def').innerText = '"' + data.def + '"';
+                document.getElementById('v-question').innerText = data.question;
+                document.getElementById('v-starter').innerText = 'STARTER: "' + data.starter + '"';
+            }
+        }
+
+        function handleScenario(el, insight, logic, starter) {
+            const parent = el.parentElement;
+            parent.querySelectorAll('.interactive-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            
+            const sidebar = document.getElementById('intel-sidebar');
+            if(sidebar) {
+                document.getElementById('i-insight').innerText = insight;
+                document.getElementById('i-logic').innerText = logic;
+                document.getElementById('i-starter').innerText = `STARTER: "${starter}"`;
+            }
+        }
+
+        function revealAnalysis(el, grammar, logic, starter) {
+            const parent = el.parentElement;
+            parent.querySelectorAll('.lyric-item').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            
+            document.getElementById('a-grammar').innerText = grammar;
+            document.getElementById('a-logic').innerText = logic;
+            document.getElementById('a-question').innerText = "Apply Context";
+            document.getElementById('a-starter').innerText = `STARTER: "${starter}"`;
+            document.getElementById('close-analysis-btn').classList.remove('hidden');
+        }
+
+        function hideAnalysis() {
+            document.querySelectorAll('.lyric-item').forEach(b => b.classList.remove('active'));
+            document.getElementById('a-grammar').innerText = "Extracting...";
+            document.getElementById('a-logic').innerText = "Select highlighted text.";
+            document.getElementById('a-question').innerText = "What will happen?";
+            document.getElementById('a-starter').innerText = `STARTER: "..."`;
+            document.getElementById('close-analysis-btn').classList.add('hidden');
+        }
+
+        function handleCombatTrial(id, row, isCorrect, text, followup, starter) {
+            if(row.parentElement.classList.contains('locked')) return;
+            const parent = row.parentElement;
+            parent.classList.add('locked');
+            Array.from(parent.children).forEach(c => c.classList.add('opacity-30', 'cursor-default'));
+            row.classList.remove('opacity-30');
+            if(isCorrect) {
+                const blank = document.getElementById(`quiz-blank-${id}`);
+                if(blank) { blank.innerText = text; blank.classList.remove('border-b-4'); }
+                row.classList.add('correct');
+                document.getElementById(`followup-box-${id}`).classList.remove('hidden');
+            } else {
+                row.classList.add('wrong');
+            }
+        }
+
+        function buildLessonNavigator() {
+            const list = document.getElementById('nav-steps-list');
+            list.innerHTML = '';
+            lessonData.forEach((step, i) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-4 rounded-xl flex items-center gap-4 transition-all ${i === state.current ? 'bg-[var(--brand-accent)] text-black font-black' : 'text-[#444] hover:bg-white/5'}`;
+                btn.innerHTML = `<span class="rajdhani text-xs">${String(i+1).padStart(2, '0')}</span><div class="flex flex-col truncate"><span class="text-[10px] truncate uppercase font-bold">${step.title}</span></div>`;
+                btn.onclick = () => { state.current = i; renderStep(); toggleLessonNavigator(); };
+                list.appendChild(btn);
+            });
+        }
+
+        // --- AI WOLF ENGINE CHAT LOGIC ---
+        function handleAiChatSubmit(e) {
+            if (e.key === 'Enter') {
+                sendAiMessage();
+            }
+        }
+
+        async function sendAiMessage() {
+            const inputEl = document.getElementById('ai-input');
+            const query = inputEl.value.trim();
+            if (!query) return;
+
+            inputEl.value = '';
+            appendAiMessage('USER', query);
+            const thinkingId = appendAiMessage('WOLF AI', 'Thinking...', true);
+
+            let retries = 5;
+            let delay = 1000;
+
+            while (retries > 0) {
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            contents: [{parts: [{text: "You are WOLF AI, a concise and helpful English teacher assistant inside an interactive learning software. Answer this query in 1-3 short sentences directly (no intro): " + query}]}]
+                        })
+                    });
+                    
+                    if (!res.ok) throw new Error('API Error');
+                    
+                    const data = await res.json();
+                    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't process that request.";
+                    updateAiMessage(thinkingId, reply);
+                    return;
+                } catch (err) {
+                    retries--;
+                    if (retries === 0) {
+                        updateAiMessage(thinkingId, "Connection error. Check system parameters or try again later.");
+                        return;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        function appendAiMessage(sender, text, isThinking = false) {
+            const container = document.getElementById('ai-messages');
+            const id = 'msg-' + Date.now();
+            const isUser = sender === 'USER';
+            
+            const alignClass = isUser ? 'self-end bg-white/10 border-white/10' : 'self-start bg-[#111] border-[var(--brand-accent)]/30';
+            const nameColor = isUser ? 'text-[#888]' : 'text-[var(--brand-accent)]';
+            const pulseClass = isThinking ? 'animate-pulse' : '';
+
+            const msgHTML = `
+                <div id="${id}" class="${alignClass} border rounded-2xl p-4 max-w-[85%] ${pulseClass}">
+                    <p class="text-[10px] ${nameColor} font-black uppercase tracking-widest mb-1">${sender}</p>
+                    <p class="text-sm text-white leading-relaxed msg-text">${text}</p>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', msgHTML);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
+
+        function updateAiMessage(id, text) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.remove('animate-pulse');
+                el.querySelector('.msg-text').innerText = text;
+            }
+        }
+
+        window.onload = updateHUD;
+    </script>
+</body>
+</html>
